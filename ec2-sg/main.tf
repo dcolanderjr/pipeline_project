@@ -12,25 +12,25 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
         encrypted = false
     }
 
-user_data  = <<-EOF
+#user_data  = <<-EOF
     #!/bin/bash
-    sudo apt update -y
-    sudo apt upgrade -y
-    sudo apt install wget -y 
-    sudo hostnamectl set-hostname Jenkins-Master
-    sudo sed -i 's/HOSTNAME=.*/HOSTNAME=Jenkins-Master/' /etc/sysconfig/network
-    sudo apt install openjdk-17-jre -y 
-    sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-        https://pkg.jenkins.io/debian/jenkins.io-2023.key
-    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-        https://pkg.jenkins.io/debian binary/ | sudo tee \
-        /etc/apt/sources.list.d/jenkins.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install jenkins
-    sudo systemctl enable jenkins
-    sudo systemctl start jenkins
-    sudo systemctl status jenkins
-  EOF
+#    sudo apt update -y
+#    sudo apt upgrade -y
+#    sudo apt install wget -y 
+#    sudo hostnamectl set-hostname Jenkins-Master
+#    sudo sed -i 's/HOSTNAME=.*/HOSTNAME=Jenkins-Master/' /etc/sysconfig/network
+#    sudo apt install openjdk-17-jre -y 
+#    sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+#        https://pkg.jenkins.io/debian/jenkins.io-2023.key
+#    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+#        https://pkg.jenkins.io/debian binary/ | sudo tee \
+#        /etc/apt/sources.list.d/jenkins.list > /dev/null
+#   sudo apt-get update
+#    sudo apt-get install jenkins
+#    sudo systemctl enable jenkins
+#    sudo systemctl start jenkins
+#    sudo systemctl status jenkins
+#  EOF
 
     tags = {                        // tags block for ec2 instance 
         Name = "Jenkins-Master"
