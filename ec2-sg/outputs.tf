@@ -28,4 +28,3 @@ output "public_ipv6_master" {
 output "public_ipv6_agent" {
     value = aws_instance.jenkins-agent.ipv6_addresses
 }
-
