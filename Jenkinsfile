@@ -1,4 +1,3 @@
-# Stage creation & tool declaration
 pipeline {
   agent { label 'Jenkins-Agent' }
   tools {
