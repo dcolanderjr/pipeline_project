@@ -1,0 +1,41 @@
+// stage creation and execution of the pipeline activities
+// 1. Cleanup Workspace 
+// 2. Checkout from SCM
+// 3. Build Application
+// 4. Test Application
+// 5. Deploy Application
+pipeline {
+  agent { label 'Jenkins-Agent' }
+  tools {
+      jdk 'Java17'
+      maven 'Maven3'
+  }
+// 1. Cleanup Workspace - This stage will clean the workspace before the build  
+  stages{
+        stage("Cleanup Workspace"){
+                steps {
+                cleanWs()
+                }
+    }
+
+// 2. Checkout from SCM - This stage will checkout the code from the GitHub repository
+        stage("Checkout from SCM"){
+                steps {
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project'
+        }
+    }
+// 3. Build Application - This stage will build the application using Maven
+        stage("Build Application"){
+            steps {
+                sh "mvn clean package"
+        }
+    }  
+// 4. Test Application - This stage will test the application using Maven    
+        stage("Test Applicaiton"){
+            steps {
+                sh "mvn test"
+            }
+        }
+    }
+}
+

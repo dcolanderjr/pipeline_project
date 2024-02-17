@@ -1,6 +1,12 @@
+# This file contains the terraform code to create an ec2 instance, ebs volume, and security group.
+# The code also creates an elastic ip for the ec2 instance.
+# # For the EBS volume, I would recommend a minimum of 20GB, as Jenkins can consume a lot of space.
+# 
 provider "aws" {                           // provider block for aws
     region = "us-east-1"
 }
+
+# Jenkins-Master Configuration
 resource "aws_instance" "jenkins-master" {     // resource block for ec2 instance
     ami = "ami-0ac80df6eff0e70b5"
     instance_type = "t2.micro"
@@ -9,10 +15,18 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
     associate_public_ip_address = true
     availability_zone = "us-east-1b"
     root_block_device {
+        volume_size = 20
+        volume_type = "gp2"
+        delete_on_termination = true
         encrypted = false
-    }
+        
+        }
+    
 
-#user_data  = <<-EOF
+# Performs apt update, installs wget, sets hostname, installs openjdk-17-jre, and installs Jenkins - you
+# can uncomment this block and comment the next block if you want to use user_data, and forgo the manual
+# installation of the neessary updates.
+# user_data  = <<-EOF
     #!/bin/bash
 #    sudo apt update -y
 #    sudo apt upgrade -y
@@ -32,6 +46,9 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
 #    sudo systemctl status jenkins
 #  EOF
 
+#
+
+# Desired tags (optional, but recommended)
     tags = {                        // tags block for ec2 instance 
         Name = "Jenkins-Master"
         Terraform = "true"
@@ -39,6 +56,8 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
         Project = "CI/CD"
     }
 }
+
+# Jenkins-Agent Configuration
 resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
  ami = "ami-0ac80df6eff0e70b5"
     instance_type = "t2.micro"
@@ -48,7 +67,14 @@ resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
     availability_zone = "us-east-1b"
     root_block_device {
         encrypted = false
-}
+        volume_size = 20
+        volume_type = "gp2"
+        delete_on_termination = true
+        // Remove the duplicate assignment of the "encrypted" argument
+        
+        }
+    
+
 # Performs apt update, installs wget, sets hostname, installs openjdk-17-jre, and installs Jenkins
 #user_data  = <<-EOF
     #!/bin/bash
@@ -73,6 +99,7 @@ resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
     #sudo systemctl status jenkins
 # EOF
 
+# Desired tags (optional, but recommended)
     tags = {                        // tags block for ec2 instance 
         Name = "Jenkins-Agent"
         Terraform = "true"
@@ -81,18 +108,7 @@ resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
     }
 }
 
-resource "aws_ebs_volume" "ebs" {       // resource block for ebs volume
-    availability_zone = "us-east-1b"
-    type = "gp2"
-    encrypted = false
-    size = 20
-    tags = {
-        Name = "Jenkins-Volume"
-        Terraform = "true"
-        Environment = "dev"
-        Project = "CI/CD"
-    }
-}
+
 resource "aws_security_group" "pipe_line_jenkins" {       // resource block for security group
     name = "jenkins"
     description = "Ingress_Egress_Rules"
