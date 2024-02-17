@@ -2,12 +2,12 @@
 # The code also creates an elastic ip for the ec2 instance.
 # # For the EBS volume, I would recommend a minimum of 20GB, as Jenkins can consume a lot of space.
 # 
-provider "aws" {                           // provider block for aws
+provider "aws" {                           
     region = "us-east-1"
 }
 
 # Jenkins-Master Configuration
-resource "aws_instance" "jenkins-master" {     // resource block for ec2 instance
+resource "aws_instance" "jenkins-master" {     
     ami = "ami-0ac80df6eff0e70b5"
     instance_type = "t2.micro"
     key_name = "Terraform-EC2"
@@ -49,7 +49,7 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
 #
 
 # Desired tags (optional, but recommended)
-    tags = {                        // tags block for ec2 instance 
+    tags = {                        
         Name = "Jenkins-Master"
         Terraform = "true"
         Environment = "dev"
@@ -58,8 +58,7 @@ resource "aws_instance" "jenkins-master" {     // resource block for ec2 instanc
 }
 
 # Jenkins-Agent Configuration
-resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
- ami = "ami-0ac80df6eff0e70b5"
+resource "aws_instance" "jenkins-agent" {     
     instance_type = "t2.micro"
     key_name = "Terraform-EC2"
     subnet_id = "subnet-0f956e05674fada38"
@@ -100,7 +99,7 @@ resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
 # EOF
 
 # Desired tags (optional, but recommended)
-    tags = {                        // tags block for ec2 instance 
+    tags = {                        
         Name = "Jenkins-Agent"
         Terraform = "true"
         Environment = "dev"
@@ -109,7 +108,7 @@ resource "aws_instance" "jenkins-agent" {     // resource block for ec2 instance
 }
 
 
-resource "aws_security_group" "pipe_line_jenkins" {       // resource block for security group
+resource "aws_security_group" "pipe_line_jenkins" {       
     name = "jenkins"
     description = "Ingress_Egress_Rules"
     vpc_id = "vpc-036bb8c5486c280db"
@@ -140,11 +139,11 @@ resource "aws_security_group" "pipe_line_jenkins" {       // resource block for 
     }
 }
 
-resource "aws_eip" "jenkins-master" {       // resource block for elastic ip
+resource "aws_eip" "jenkins-master" {       // 
     instance = aws_instance.jenkins-master.id
 }
 
-resource "aws_eip" "jenkins-agent" {       // resource block for elastic ip
+resource "aws_eip" "jenkins-agent" {       // 
     instance = aws_instance.jenkins-agent.id
 }
 
