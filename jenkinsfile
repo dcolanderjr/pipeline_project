@@ -24,7 +24,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project/"'
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project"'
                 }
         }
 
