@@ -73,13 +73,7 @@ pipeline {
             steps {
                 sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}:latest"
             }
-        }
-        
-        post{
-            always {
-                sh "docker logout"
-            }
-        }
+        }   
     }
 }
     
