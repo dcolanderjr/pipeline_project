@@ -8,7 +8,7 @@ provider "aws" {
 
 # Jenkins-Master Configuration
 resource "aws_instance" "jenkins-master" {     
-    ami = "ami-0ac80df6eff0e70b5"
+    ami = "ami-0c7217cdde317cfec"
     instance_type = "t2.micro"
     key_name = "Terraform-EC2"
     subnet_id = "subnet-0f956e05674fada38"
@@ -59,7 +59,54 @@ resource "aws_instance" "jenkins-master" {
 
 # Jenkins-Agent Configuration
 resource "aws_instance" "jenkins-agent" {     
+    ami = "ami-0c7217cdde317cfec"
     instance_type = "t2.micro"
+    key_name = "Terraform-EC2"
+    subnet_id = "subnet-0f956e05674fada38"
+    associate_public_ip_address = true
+    availability_zone = "us-east-1b"
+    root_block_device {
+        encrypted = false
+        volume_size = 20
+        volume_type = "gp2"
+        delete_on_termination = true
+        }
+# Performs apt update, installs wget, sets hostname, installs openjdk-17-jre, and installs Jenkins
+#user_data  = <<-EOF
+    #!/bin/bash
+    #sudo apt update -y
+    #sudo apt upgrade -y
+    #sudo apt install wget -y 
+    #sudo apt get install docker.io -y
+    #sudo apt get install docker.io -y
+    #sudo hostnamectl set-hostname Jenkins-Agent
+    #sudo sed -i 's/HOSTNAME=.*/HOSTNAME=Jenkins-Agent/' /etc/sysconfig/network
+    #sudo usermod -aG docker $USERsudo
+    #sudo apt install openjdk-17-jre -y 
+    #sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+        #https://pkg.jenkins.io/debian/jenkins.io-2023.key
+    #echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+        #https://pkg.jenkins.io/debian binary/ | sudo tee \
+        #/etc/apt/sources.list.d/jenkins.list > /dev/null
+    #sudo apt-get update
+    #sudo apt-get install jenkins
+    #sudo systemctl enable jenkins
+    #sudo systemctl start jenkins
+    #sudo systemctl status jenkins
+# EOF
+
+# Desired tags (optional, but recommended)
+    tags = {                        
+        Name = "Jenkins-Agent"
+        Terraform = "true"
+        Environment = "dev"
+        Project = "CI/CD"
+    }
+}
+
+resource "aws_instance" "sonarqube" {     
+    ami = "ami-0c7217cdde317cfec"
+    instance_type = "t3.medium"
     key_name = "Terraform-EC2"
     subnet_id = "subnet-0f956e05674fada38"
     associate_public_ip_address = true
@@ -100,7 +147,7 @@ resource "aws_instance" "jenkins-agent" {
 
 # Desired tags (optional, but recommended)
     tags = {                        
-        Name = "Jenkins-Agent"
+        Name = "SonarQube"
         Terraform = "true"
         Environment = "dev"
         Project = "CI/CD"
@@ -120,6 +167,14 @@ resource "aws_security_group" "pipe_line_jenkins" {
         cidr_blocks = ["0.0.0.0/0"]
         ipv6_cidr_blocks = ["::/0"]
         description = "Allow Jenkins"
+    }
+    ingress {
+        from_port = 9000
+        to_port = 9000
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+        ipv6_cidr_blocks = ["::/0"]
+        description = "Allow SonarQube"
     }
     ingress {
         from_port = 22
@@ -147,5 +202,7 @@ resource "aws_eip" "jenkins-agent" {       //
     instance = aws_instance.jenkins-agent.id
 }
 
-
+resource "aws_eip" "SonarQube" {
+    instance = aws_instance.sonarqube.id
+}
 
