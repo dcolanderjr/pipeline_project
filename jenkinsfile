@@ -4,79 +4,79 @@ pipeline {
         jdk 'Java17'
         maven 'Maven3'
     }
-
-    environment { 
-            APP_NAME        = "pipeline-project"
-            RELEASE         = "1.0.0"
-            DOCKER_CREDS    = credentials('dockerhub')
+    
+    environment {
+	    APP_NAME = "pipeline-project-app"
+            RELEASE = "1.0.0"
+            DOCKER_USER     = "dcolanderjr"
+            DOCKER_PASS     = 'dockerhub'
             IMAGE_NAME      = "${DOCKER_USER}" + "/" + "${APP_NAME}"
             IMAGE_TAG       = "${RELEASE}-${BUILD_NUMBER}"
+	        //JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
     }
-
-    stages {
-        stage("Cleanup Workspace") {
-            steps {
+    
+    stages{
+        stage("Cleanup Workspace"){
+                steps {
                 cleanWs()
-            }
+                }
         }
 
-        stage("Checkout from SCM") {
-            steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project'
-            }
+        stage("Checkout from SCM"){
+                steps {
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project/"'
+                }
         }
 
-        stage("Build Application") {
+        stage("Build Application"){
             steps {
                 sh "mvn clean package"
             }
-        }
 
-        stage("Test Application") {
-            steps {
-                sh "mvn test"
+       }
+
+       stage("Test Application"){
+           steps {
+                 sh "mvn test"
+           }
+       }
+
+       stage("SonarQube Analysis"){
+           steps {
+	           script {
+		        withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') { 
+                        sh "mvn sonar:sonar"
+		        }
+	           }	
+           }
+       }
+
+       stage("Quality Gate"){
+           steps {
+               script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
+                }	
             }
+
         }
 
-        stage("SonarQube Analysis") {
+        stage("Build & Push Docker Image") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
-                        sh "mvn sonar:sonar"
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
                     }
                 }
             }
-        }
 
-        stage("Quality Gate") {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
-                }
-            }
-        }
-
-
-        stage("Build Docker Image") {
-            steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-            }
-        }
-
-        stage("Login to DockerHub") {
-            steps ('Login to DockerHub') {
-                sh 'echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin'
-            }
-        }    
-
-        stage("Push Docker Image") {
-            steps {
-                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}:latest"
-            }
-        }   
+       }
     }
 }
-    
             
         
     
