@@ -1,4 +1,4 @@
-// Second pipeline written in groovy for terraform deployment.
+// Second jenkins pipeline for CICD infra deployment.
 // This pipeline will be used to deploy the infrastructure using terraform.
 // Any changes to the infrastructure will be made in the terraform code and then pushed to the 
 // repository. Then the pipeline will be triggered to deploy the infrastructure.
