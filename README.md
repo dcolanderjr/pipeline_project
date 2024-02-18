@@ -9,4 +9,5 @@ To get started, clone the repo, and then configure your instances however you se
 I promise to make this more cohesive and fix this as I go.
 
 Docker - on the jenkins configuration page navigate to plugins, and download the following and install them on your jenkins server:
-[image](https://github.com/dcolanderjr/pipeline_project/assets/131455625/236abeff-6a94-47eb-ba1f-406fe0510b05)
+![image](https://github.com/dcolanderjr/pipeline_project/assets/131455625/79c11563-0a74-4be9-bd44-9d573449bd3a)
+
