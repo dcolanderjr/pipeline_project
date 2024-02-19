@@ -57,17 +57,18 @@ pipeline {
 
         }
 
-        stage('Login to Docker Hub') {
+       stage('Login to Docker Hub') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    echo 'Login to Docker Hub successful'
+                script {
+                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                        echo 'Login to Docker Hub successful'
                 }
             }
         }
 
         stage('Push Image to DockerHub') {
             steps{
-                sh 'sudo docker push dcolanderjr/pipeline_project:latest'
+                sh "sudo docker push dcolanderjr/pipeline_project:latest"
                     echo 'Image pushed to DockerHub'
             }       
         }
@@ -77,4 +78,5 @@ pipeline {
                 sh 'docker logout'
             }   
         }
-}     
+    }   
+} 
