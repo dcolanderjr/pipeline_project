@@ -4,10 +4,8 @@ pipeline {
         jdk 'Java17'
         maven 'Maven3'
     }
-}
-    
     environment {
-	    APP_NAME = "register-app-pipeline"
+	    APP_NAME = "pipeline_project_app"
             RELEASE = "1.0.0"
             DOCKER_USER         = "dcolanderjr"
             DOCKER_PASS         = 'dockerhub'
@@ -15,7 +13,6 @@ pipeline {
             IMAGE_TAG           = "${RELEASE}-${BUILD_NUMBER}"
 	        JENKINS_API_TOKEN   = credentials("JENKINS_API_TOKEN")
     }
-
     stages{
         stage("Cleanup Workspace"){
                 steps {
@@ -25,7 +22,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: "https://github.com/dcolanderjr/pipeline_project"
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project/'
                 }
         }
 
@@ -58,6 +55,7 @@ pipeline {
                     waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
                 }	
             }
+
         }
 
         stage("Build & Push Docker Image") {
@@ -75,3 +73,4 @@ pipeline {
             }
         }
     }
+}
