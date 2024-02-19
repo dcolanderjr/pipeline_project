@@ -72,11 +72,5 @@ pipeline {
                     echo 'Image pushed to DockerHub'
             }       
         }
-
-        post {
-            always {
-                sh 'docker logout'
-            }   
-        }
-    }   
-} 
+    }
+}
