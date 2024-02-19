@@ -33,7 +33,7 @@ output "eip_sonarqube" {
     value = aws_eip.sonarqube.public_ip
 }
 
-output "eip_eks_bootstrap_server" {
+output "eip_eks-bootstrap-server" {
     value = aws_eip.eks-bootstrap-server.public_ip
 }
 output "instance_id_master" {                         // output block for instance id

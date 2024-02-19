@@ -8,7 +8,7 @@ provider "aws" {
 
 # Jenkins-Master Configuration
 resource "aws_instance" "jenkins-master" {     
-    ami = "ami-0c7217cdde317cfec"
+    ami = "ami-0ac80df6eff0e70b5"
     instance_type = "t2.micro"
     key_name = "Terraform-EC2"
     subnet_id = "subnet-0f956e05674fada38"
@@ -59,7 +59,7 @@ resource "aws_instance" "jenkins-master" {
 
 # Jenkins-Agent Configuration
 resource "aws_instance" "jenkins-agent" {     
-    ami = "ami-0c7217cdde317cfec"
+    ami = "ami-0ac80df6eff0e70b5"
     instance_type = "t2.micro"
     key_name = "Terraform-EC2"
     subnet_id = "subnet-0f956e05674fada38"
@@ -247,10 +247,10 @@ resource "aws_eip" "jenkins-agent" {       //
     instance = aws_instance.jenkins-agent.id
 }
 
-resource "aws_eip" "SonarQube" {
+resource "aws_eip" "sonarqube" {
     instance = aws_instance.sonarqube.id
 }
 
-resource "aws_eip" "EKS-Bootstrap-Server" {
+resource "aws_eip" "eks-bootstrap-server" {
     instance = aws_instance.eks-bootstrap-server.id
 }
