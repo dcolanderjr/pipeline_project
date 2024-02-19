@@ -60,9 +60,16 @@ pipeline {
        stage('Login to Docker Hub') {
             steps {
                 script {
-                    sh "sudo docker login -u dcolanderjr -p 'USER_PASSWORD'"
+                    sh "sudo docker login -u dcolanderjr -p "$USER_PASSWORD""
                         echo 'Login to Docker Hub successful'
                 }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "sudo docker build -t dcolanderjr/pipeline_project:latest ."
+                    echo 'Docker Image built successfully'
             }
         }
 
