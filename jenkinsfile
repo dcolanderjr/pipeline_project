@@ -5,8 +5,8 @@ pipeline {
         maven 'Maven3'
     }
     environment {
-	    APP_NAME = "pipeline_project_app"
-            RELEASE = "1.0.0"
+	        APP_NAME            = "pipeline_project_app"
+            RELEASE             = "1.0.0"
             DOCKER_USER         = "dcolanderjr"
             DOCKER_PASS         = 'dockerhub'
             IMAGE_NAME          = "${DOCKER_USER}" + "/" + "${APP_NAME}"
@@ -22,7 +22,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project/'
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/dcolanderjr/pipeline_project'
                 }
         }
 
