@@ -4,12 +4,16 @@ pipeline {
         jdk 'Java17'
         maven 'Maven3'
     }
+}
     
     environment {
-	    APP_NAME = "pipeline-project-app"
-            RELEASE         = "1.0.0"
-            USER_NAME       = "dcolanderjr"
-            USER_PASSWORD   = credentials('dockerhub')
+	    APP_NAME = "register-app-pipeline"
+            RELEASE = "1.0.0"
+            DOCKER_USER         = "dcolanderjr"
+            DOCKER_PASS         = 'dockerhub'
+            IMAGE_NAME          = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+            IMAGE_TAG           = "${RELEASE}-${BUILD_NUMBER}"
+	        JENKINS_API_TOKEN   = credentials("JENKINS_API_TOKEN")
     }
 
     stages{
@@ -54,30 +58,20 @@ pipeline {
                     waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
                 }	
             }
-
         }
 
-       stage('Login to Docker Hub') {
+        stage("Build & Push Docker Image") {
             steps {
                 script {
-                    sh "sudo docker login -u dcolanderjr -p {$USER_PASSWORD}"
-                        echo 'Login to Docker Hub successful'
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                    }
                 }
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                sh "sudo docker build -t dcolanderjr/pipeline_project:latest ."
-                    echo 'Docker Image built successfully'
-            }
-        }
-
-        stage('Push Image to DockerHub') {
-            steps{
-                sh "sudo docker push dcolanderjr/pipeline_project:latest"
-                    echo 'Image pushed to DockerHub'
-            }       
-        }
     }
-}
