@@ -9,7 +9,7 @@ pipeline {
 	    APP_NAME = "pipeline-project-app"
             RELEASE         = "1.0.0"
             USER_NAME       = "dcolanderjr"
-            USER_PASSWORD   = 'dockerhub'
+            USER_PASSWORD   = credentials('dockerhub')
     }
 
     stages{
