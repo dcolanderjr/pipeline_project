@@ -6,7 +6,7 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: register-app
+      app: pipeline-project
   template:
     metadata:
       labels:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: pipeline-project
-          image: dcolanderjr/pipeline-project-app:1.0.0-9
+          image: dcolanderjr/pipeline_project_app:1.0.0-72
           resources:
             limits:
               memory: "256Mi"
