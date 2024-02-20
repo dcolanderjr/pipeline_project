@@ -1,38 +1,34 @@
 <form action="action_page.php">
   <div class="container">
-    <h1>New user Register for DevOps Learning at Virtual TechBox Youtube Channel</h1>
-    <p>Please fill in this form to create an account.</p>
+    <h1>And we have completed the application!</h1>
+    <p>Let me know how you did! Feel free to drop me a line on GitHub!</p>
     <hr>
      
-    <label for="Name"><b>Enter Name</b></label>
+    <label for="Name"><b>What should we call you?: </b></label>
     <input type="text" placeholder="Enter Full Name" name="Name" id="Name" required>
     <br>
     
-    <label for="mobile"><b>Enter mobile</b></label>
-    <input type="text" placeholder="Enter moible number" name="mobile" id="mobile" required>
-    <br>
-
-    <label for="email"><b>Enter Email</b></label>
+    <label for="email"><b>How can we reach you?: </b></label>
     <input type="text" placeholder="Enter Email" name="email" id="email" required>
     <br>
 
-    <label for="psw"><b>Password</b></label>
+    <label for="psw"><b>Ancient Secret: </b></label>
     <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
     <br>
 
-    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <label for="psw-repeat"><b>Ancient Secret, again: </b></label>
     <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
     <hr>
     <br>
-    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+    <p>When you create an account, you agree to the legal stuff. <a href="#">Terms & Privacy</a>.</p>
     <button type="submit" class="registerbtn">Register</button>
   </div>
   <div class="container signin">
-    <p>Already have an account? <a href="#">Sign in</a>.</p>
+    <p>Already have an account? <a href="#">GET ON IN HERE!</a>.</p>
   </div>
 
-   <h1> Thank You </h1>
+   <h1> And we did it, we have created our first CI/CD Pipeline!</h1>
    <br>
-   <h1> Happy Learning. See You Again. </h1>
+   <h1> And this concludes the project, thank you again! </h1>
    
 </form>
