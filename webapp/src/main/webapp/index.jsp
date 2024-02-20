@@ -29,6 +29,6 @@
 
    <h1> And we did it, we have created our first CI/CD Pipeline!</h1>
    <br>
-   <h1> This concludes the project, thank you again! </h1>
+   <h1> This concludes the project. Thank you again! </h1>
    <h1> kloudkamp.com  </h1>
 </form>
