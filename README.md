@@ -17,15 +17,21 @@ Infrastructure Configuration - For this project, we will need 3 instances; you c
 
 
 
-Jenkins Configuration - 
+Infrastructure configurations & necessary downloads:
+Jenkins Master -
 
+Jenkins Agent - 
 
+SonarQube -
 
-SonarQube Configuration - 
+EKS-Bootstrap-Server
 
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 
 Docker Configuration - on the jenkins configuration page navigate to plugins, and download the following and install them on your jenkins server. On the next page where it shows downloading, make sure to tick the box that says reboot after installation. Once you reboot, you may be required to log back in.
 ![image](https://github.com/dcolanderjr/pipeline_project/assets/131455625/79c11563-0a74-4be9-bd44-9d573449bd3a)
 
 Once you perform this task
+
+
