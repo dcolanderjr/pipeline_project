@@ -56,7 +56,7 @@ In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save an
 . ssh-keygen
 This will generate an SSH key that you will need to configure on the Jenkins-Agent in the next set of instructions. This should generate a keygen image:
 
-![alt text](image-3.png)
+![Screenshot 2024-02-20 101632](https://github.com/dcolanderjr/pipeline_project/assets/131455625/b35c459e-b845-486c-9d08-071670753f5b)
 
 . cd .ssh/
 You should see three files, if you are using MobaXterm, navigate using the folders on the left hand panel, otherwise use the 'cat id_rsa_pub' to read the file, copy its contents, you will need them later.
