@@ -479,6 +479,10 @@ Using the code editor, navigate to the webapp/src/main/webapp directory, and run
 
 Once you quit, use 'git add .' , 'git commit -m "test" ' , 'git push origin main', this will push the update of the web application, and start the pipeline. Below are the screenshots capturing the pipeline.
 
+    # git add .
+    # git commit -m "test"
+    # git push origin main
+
 ![sourcecodechange](https://github.com/dcolanderjr/pipeline_project/assets/131455625/05202f2b-e3c9-4d26-b5ce-a7963569ace7)
 
 ![pipeline-ci](https://github.com/dcolanderjr/pipeline_project/assets/131455625/768fabb1-6ece-42a5-ae7a-e3a65ef02565)
