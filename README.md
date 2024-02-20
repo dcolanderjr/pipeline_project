@@ -34,60 +34,70 @@ Required Downloads - openJDK-17-jre, docker, sonarqube, postgresql
 EKS-Bootstrap-Server
 Required Downloads - Docker, ArgoCD, kubectl
 
-... included in the repo is the Terraform configuration to get you started. It will launch Jenkins-Master, Jenkins-Agent, SonarQube, and EKS instance. When you launch each instance, make sure you run the apt commands to update, and upgrade prior to starting any other downloads. The instances will launch with the necessary ports open, so you should not have to mess with your security group rules, however, double check in the console. Note: Make sure you change the region, subnet ID's if you are using the Terraform template, they can be launched, however, they are more of a guide in order to let you know what the configuration is. If you want to use the console, you can skip this part of using Terraform, manually create your instances, and pick up below. I do however encourage you to navigate through completing the infrastructure as code portion, as this is just more practice. There is ALSO a Jenkins file that has the full pipeline already configured, you will need to update this information with YOUR information as we go. The project is iterative. I am assuming you have a bit of know how, and you test your build as we go along, comment out the parts we do not need and unlock them as we go along. There is some jumping back and forth, so please be aware of which repo I am directing you to. The Jenkinsfile in the 'pipeline-project' is the one that is iterative, and you should be following along, the second one in 'gitops-pipeline-app' is the secondary one. ...
+## included in the repo is the Terraform configuration to get you started. It will launch Jenkins-Master, Jenkins-Agent, SonarQube, and EKS instance. When you launch each instance, make sure you run the apt commands to update, and upgrade prior to starting any other downloads. The instances will launch with the necessary ports open, so you should not have to mess with your security group rules, however, double check in the console. Note: Make sure you change the region, subnet ID's if you are using the Terraform template, they can be launched, however, they are more of a guide in order to let you know what the configuration is. If you want to use the console, you can skip this part of using Terraform, manually create your instances, and pick up below. I do however encourage you to navigate through completing the infrastructure as code portion, as this is just more practice. There is ALSO a Jenkins file that has the full pipeline already configured, you will need to update this information with YOUR information as we go. The project is iterative. I am assuming you have a bit of know how, and you test your build as we go along, comment out the parts we do not need and unlock them as we go along. There is some jumping back and forth, so please be aware of which repo I am directing you to. The Jenkinsfile in the 'pipeline-project' is the one that is iterative, and you should be following along, the second one in 'gitops-pipeline-app' is the secondary one. ##
 
 Jenkins-Master Configuration:
 Using your SSH tool, login to the instance using its public IP address and the keypair you created earlier. Then run the following commands:
-. sudo apt update
-. sudo apt upgrade
-. sudo nano /etc/hostname >> change the hostname to 'Jenkins-Master' // save and exit. :wq!
-. sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reconnect via SSH)
-. sudo apt install openjdk-17-jre
-. java --version // verify you have downloaded Java
-. sudo apt-get install docker.io
-. sudo usermod -aG docker $USER
-. sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reonnect via SSH, alternatively use newgrp docker command)
-Next, navigate to your browser, and search for "Jenkins weekly release", navigate to the section for Ubuntu, and copy the script to download and install Jenkins.
-. sudo systemctl start jenkins
-. sudo systemctl enable jenkins
-. sudo systemctl status jenkins
-. sudo nano /etc/ssh/sshd_config
-In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save and close. 
-. ssh-keygen
+    
+    # sudo apt update
+    # sudo apt upgrade
+    # sudo nano /etc/hostname >> change the hostname to 'Jenkins-Master' // save and exit. :wq!
+    # sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reconnect via SSH)
+    # sudo apt install openjdk-17-jre
+    # java --version // verify you have downloaded Java
+    # sudo apt-get install docker.io
+    # sudo usermod -aG docker $USER
+    # sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reonnect via SSH, alternatively use newgrp docker command)
+    
+    Next, navigate to your browser, and search for "Jenkins weekly release", navigate to the section for Ubuntu, and copy the script to download and install Jenkins.
+    
+    # sudo systemctl start jenkins
+    # sudo systemctl enable jenkins
+    # sudo systemctl status jenkins
+    # sudo nano /etc/ssh/sshd_config
+    $ In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save and close. 
+    
+    # ssh-keygen
 This will generate an SSH key that you will need to configure on the Jenkins-Agent in the next set of instructions. This should generate a keygen image:
 
 ![alt text](image-3.png)
 
-. cd .ssh/
+    # cd .ssh/
 You should see three files, if you are using MobaXterm, navigate using the folders on the left hand panel, otherwise use the 'cat id_rsa_pub' to read the file, copy its contents, you will need them later.
 
 Jenkins-Agent Configuration
 Using your SSH tool, login to the instance using its public IP address and the keypair you created earlier.
 Then run the following commands (ENSURE DOCKER IS INSTALLED HERE, IT WILL BE USED TO BUILD EVERYTHING):
 
-. sudo apt update
-. sudo apt upgrade
-. sudo nano /etc/hostname >> change the hostname to 'Jenkins-Agent' // save and exit. :wq!
-. sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reconnect via SSH)
-. sudo apt install openjdk-17-jre
-. java --version // verify you have downloaded Java
-. sudo apt-get install docker.io
-. sudo usermod -aG docker $USER
-. sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reonnect via SSH, alternatively use newgrp docker command)
+    # sudo apt update
+    # sudo apt upgrade
+    # sudo nano /etc/hostname >> change the hostname to 'Jenkins-Agent' // save and exit. :wq!
+    # sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reconnect via SSH)
+    # sudo apt install openjdk-17-jre
+    # java --version // verify you have downloaded Java
+    # sudo apt-get install docker.io
+    # sudo usermod -aG docker $USER
+    # sudo init 6 (this should reboot your server, wait about 20-30 seconds, and reonnect via SSH, alternatively use newgrp docker command)
 Next, navigate to your browser, and search for "Jenkins weekly release", navigate to the section for Ubuntu, and copy the script to download and install Jenkins.
-. sudo systemctl start jenkins
-. sudo systemctl enable jenkins
-. sudo systemctl status jenkins
-. sudo nano /etc/ssh/sshd_config
+
+    # sudo systemctl start jenkins
+    # sudo systemctl enable jenkins
+    # sudo systemctl status jenkins
+    # sudo nano /etc/ssh/sshd_config
 In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save and close. 
-. sudo service sshd reload
+
+    
+    # sudo service sshd reload
 Perform this on both instances.
-. cd .ssh/
+ 
+    
+    # cd .ssh/
 You should see an authorized_keys file, from that last step in the 'Jenkins-Master' node section, paste in your
 ssh key UNDER the existing one. DO NOT OVERWRITE THE EXISTING KEY. You can use vim or nano if you are not using MobaXterm. Once complete, ensure you run 'cat authorized_keys' to ensure you have completed this step.
 
 Next, copy the public IP of the Jenkins-Master node, and use your web browser to access Jenkins. Make sure you append port 8080 on the end ie. :8080 to whatever the IP address is. This will allow you to access Jenkins. Now, what you need to do is return to the Jenkins-Master ssh terminal, run the following command to get the initial password:
-. sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+    
+    # sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 Copy and paste that into the Unlock Jenkins page. Install suggested plugins. Create a user, and a new password. You will use this to log in to Jenkins going forward, save and continue through finish to start using Jenkins.
 
 Configure Jenkins-Agent as a node
@@ -126,7 +136,7 @@ Navigate to Dashboard > Manage Jenkins > Tools
 
 ![alt text](maveninstall.png)
 
-![alt text](javascriptinstallation.png)
+insert image javascript installation
 
 Next, return to the Dashboard. Manage Jenkins > Credentials > System > Global credentials (unrestricted). If you have not alreday created your access token in github, do that now. Your password is your access token. The ID for this will be 'github' which is referenced in the Jenkinsfile script used later.
 
@@ -134,70 +144,73 @@ insert image credentials
 
 Next, will configure the SonarQube Instance, you will need to SSH into the instance in order to configure it. The SonarQube instance is the t3.medium, again, the reason why this one is used is because of the database (PostgreSQL) and SonarQube. I am going to just leave the instructions on this portion. This part is not difficult, however, some of the learning pains I had doing this came from this section here.
 
-. Perform Updates
-. sudo apt update
-. sudo apt upgrade
-. sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/      sources.list.d/pgdg.list'
-. wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
+    # Perform Updates
+    # sudo apt update
+    # sudo apt upgrade
+    # sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/      sources.list.d/pgdg.list'
+    # wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
 
 Install PostgreSQL
 
-. sudo apt update
-. sudo apt-get -y install postgresql postgresql-contrib
-. sudo systemctl enable postgresql
+    # sudo apt update
+    # sudo apt-get -y install postgresql postgresql-contrib
+    # sudo systemctl enable postgresql
 
 Create Database for Sonarqube
-. sudo passwd postgres (IMPORTANT, YOU WILL NEED TO REMEMBER THIS PASSWORD)
-. su - postgres
-. createuser sonar 
-. psql 
-. ALTER USER sonar WITH ENCRYPTED password 'sonar';
-. CREATE DATABASE sonarqube OWNER sonar;
-. grant all privileges on DATABASE sonarqube to sonar;
-. \q
-. exit
+    #sudo passwd postgres (IMPORTANT, YOU WILL NEED TO REMEMBER THIS PASSWORD)
+    
+    # su - postgres
+    # createuser sonar 
+    # psql 
+    # ALTER USER sonar WITH ENCRYPTED password 'sonar';
+    # CREATE DATABASE sonarqube OWNER sonar;
+    # grant all privileges on DATABASE sonarqube to sonar;
+    # \q
+    # exit
 
 Add the repository for Adpotium (Important)
-. sudo bash
-. wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
-. echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+    
+    # sudo bash
+    # wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
+    # echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
 
 Install Java 17
-. apt update
-. apt install temurin-17-jdk
-. update-alternatives --config java
-. /usr/bin/java --version
-. exit 
+
+    # apt update
+    # apt install temurin-17-jdk
+    # update-alternatives --config java
+    # /usr/bin/java --version
+    # exit 
 
 Linux Kernel Tuning - SonarQube uses alot of resources, and we need to tune some of the kernel files. Below are the files, and what should be added into the files. It is EXTREMELY important that you do not modify ANYTHING else except what is asked of you below. Copy and paste the information at the end of the file, and then save and quit.
 
-. sudo vim /etc/security/limits.conf (IMPORTANT STEP, DO NOT SKIP)
+    # sudo vim /etc/security/limits.conf (IMPORTANT STEP, DO NOT SKIP)
     Paste the below values at the bottom of the file
     sonarqube   -   nofile   65536
     sonarqube   -   nproc    4096
 
 Increase Mapped Memory Regions - Long story short, elastisearch which is by SonarQube to find the vulnerabilties moves very fast to reference and cross reference from the DB, its imperative that we give it enough memory to do so, efficiently. Below this value, is not recommended.
 
-. sudo vim /etc/sysctl.conf (IMPORTANT STEP, DO NOT SKIP)
+    # sudo vim /etc/sysctl.conf (IMPORTANT STEP, DO NOT SKIP)
     Paste the below values at the bottom of the file
     vm.max_map_count = 262144
 
 Install SonarQube
 
-. sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.0.65466.zip
-. sudo apt install unzip
-. sudo unzip sonarqube-9.9.0.65466.zip -d /opt
-. sudo mv /opt/sonarqube-9.9.0.65466 /opt/sonarqube
+    # sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.0.65466.zip
+    # sudo apt install unzip
+    # sudo unzip sonarqube-9.9.0.65466.zip -d /opt
+    # sudo mv /opt/sonarqube-9.9.0.65466 /opt/sonarqube
 
 Create user and set permissions - This section will create the sonarqube user, and password that will be needed to login, use the defaults listed below, change it once you can access it if you desire.
 
-. sudo groupadd sonar
-. sudo useradd -c "user to run SonarQube" -d /opt/sonarqube -g sonar sonar
-. sudo chown sonar:sonar /opt/sonarqube -R
+    # sudo groupadd sonar
+    # sudo useradd -c "user to run SonarQube" -d /opt/sonarqube -g sonar sonar
+    # sudo chown sonar:sonar /opt/sonarqube -R
 
 Update Sonarqube properties with DB credentials
      
-. sudo vim /opt/sonarqube/conf/sonar.properties
+    # sudo vim /opt/sonarqube/conf/sonar.properties
     
      sonar.jdbc.username=sonar
      sonar.jdbc.password=sonar
@@ -208,7 +221,7 @@ insert image, sonarqubedbsettings
 
 Create the SonarQube Service. You will need to create this file, it is empty. And copy and paste the information below into it. Then save and quit.
 
-. sudo vim /etc/systemd/system/sonar.service
+    # sudo vim /etc/systemd/system/sonar.service
 
    Copy the information below, and paste it into the above file location.
      [Unit]
@@ -232,13 +245,14 @@ Create the SonarQube Service. You will need to create this file, it is empty. An
      WantedBy=multi-user.target
 
 Start Sonarqube and Enable service
-. sudo systemctl start sonar
-. sudo systemctl enable sonar
-. sudo systemctl status sonar
+    
+    # sudo systemctl start sonar
+    # sudo systemctl enable sonar
+    # sudo systemctl status sonar
 
 Watch log files and monitor for startup
 
-. sudo tail -f /opt/sonarqube/logs/sonar.log
+    # sudo tail -f /opt/sonarqube/logs/sonar.log
 
 If everything went well, you should have been presented with this page upon login:
 
@@ -283,39 +297,48 @@ Next, we need to create a credential to log in to Docker. Navigate to Dashboard 
 image docker hub creds
 
 At this point, you also need to install Trivy. On your Jenkins-Agent, login via SSH, and use the command:
-. sudo snap install trivy
+    
+    # sudo snap install trivy
 
 Alright now we are at the fun part, KUBERNETES! Your EKS-Bootstrap-Server is up if you used the Terraform, if not, no worries, I'll wait.
 
 Ok, now that it is up, let's get started. First, you will need to perform your updates on your server, so per usual run these commands:
-. sudo apt update
-. sudo apt upgrade
-. sudo apt install unzip
-. sudo nano /etc/hostname
+
+    # sudo apt update
+    # sudo apt upgrade
+    # sudo apt install unzip
+    # sudo nano /etc/hostname
+
 Change the name of the server from its IP address, to EKS-Bootstrap-Server
-. sudo init 6 (this should reboot your server, wait about 30 seconds and log back in)
-. curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-. unzip awscliv2.zip
-. sudo ./aws/install
+
+    # sudo init 6 (this should reboot your server, wait about 30 seconds and log back in)
+    # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    # unzip awscliv2.zip
+    # sudo ./aws/install
+
 You can now run: /usr/local/bin/aws --version (this should be the response if it is performed correctly)
 
 Next, we now need to install kubectl, use this command to download it:
-. sudo su
-. curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
-. ll 
-. chmod +x ./kubectl
+
+    # sudo su
+    # curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
+    # ll 
+    # chmod +x ./kubectl
 Use this command to change the permissions of the ./kubectl directory
-. mv kubectl /bin   
+
+    # mv kubectl /bin   
 All of our executables are in this folder, so need to move it there.
-. kubectl version --output=yaml
+
+    # kubectl version --output=yaml
 It will show a connection refused error, this is ok. We have not started the service yet. Nor have we finished the downloads.
 
-. curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-. cd /tmp
-. ll
-. sudo mv /tmp/eksctl /bin
+    # curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    # cd /tmp
+    # ll
+    # sudo mv /tmp/eksctl /bin
 We need to move this to /bin, because all of our executable files are already there.
-. eksctl version
+    
+    # eksctl version
 
 insert kubectl image
 
@@ -333,31 +356,38 @@ insert kubectl config
 insert kubectl done
 
 Now, we need to create a namespace for ArgoCD on our cluster, start by issuing this command:
-. kubectl create namespace argocd
+
+    # kubectl create namespace argocd
 
 Next, we need to apply the YAML configuration files to ArgoCD:
-. kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+    # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 Once this is completed, verify you can see the pods created in the ArgoCD namespace:
-. kubectl get pods -n argocd
+
+    # kubectl get pods -n argocd
 
 In order to communicate with the API Server, the following commands need to be performed, also the permissions need to be changed.
-. curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
-. chmod +x /usr/local/bin/argocd
+
+    # curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
+    # chmod +x /usr/local/bin/argocd
 
 Next, we need to expose the load balancer for the cluster. The process can take about 5 minutes to complete, but run this command:
-. kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+    # kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 In order to get the load balancer URL, we need to run the following command. The second command will allow you to get the password so that we can actually log in to ArgoCD.
-. sudo kubectl get svc -n argocd
-. sudo kubectl get secret argocd-initial-admin-secret -n argocd -o yaml
-. echo RjJxdUZWS0ZVSXZBZEhtVA== | base64 --decode
+
+    # sudo kubectl get svc -n argocd
+    # sudo kubectl get secret argocd-initial-admin-secret -n argocd -o yaml
+    # echo RjJxdUZWS0ZVSXZBZEhtVA== | base64 --decode
 Copy the response, and stick it in your note pad, you will need it to login to ArgoCD.
 
 insert image - retrieve password
 
 Run the following command to get the load balancer URL for the ArgoCD Login page:
-. kubectl get svc -n argocd
+
+    # kubectl get svc -n argocd
 
 insert ArgoCD snaps
 
@@ -365,14 +395,15 @@ Once you login to ArgoCD, go to User Info, IMMEDIATELY, and change your password
 
 Next, we need to add our EKS cluster to ArgoCD, and this must be done from the CLI. Issue the following command:
 
-. sudo argocd login XXXXXXXXXXXXXXXXXYOUR CLUSTER NAMEXXXXXXXXXX.us-east-1.elb.amazonaws.com --username admin
+    # sudo argocd login XXXXXXXXXXXXXXXXXYOUR CLUSTER NAMEXXXXXXXXXX.us-east-1.elb.amazonaws.com --username admin
 type y, and then enter your password that you created in ArgoCD. You should have a green successful message. Return to ArgoCD, go to Settings > scroll down to clusters, and you should see the cluster you just added.
 
 Next run this command to verify from the terminal: You should see your cluster listed. The second command will show your namespace, copy the name, it will start with i-0sdjlkafdsjlkajl-cluster.region.eksctl.io, copy this.
-. argocd cluster list
-. sudo kubectl config get-contexts
-. argocd cluster add i-0sdjlkafdsjlkajl-cluster.region.eksctl.io --name enter_a_name_for_your_cluster
-. argocd cluster list 
+
+    # argocd cluster list
+    # sudo kubectl config get-contexts
+    # argocd cluster add i-0sdjlkafdsjlkajl-cluster.region.eksctl.io --name enter_a_name_for_your_cluster
+    # argocd cluster list 
 You should see all of the clusters.
 
 Ok, now we need to connect our repository to our ArgoCD cluster. But, before we do that, clone the second repo to your system, the one named 'gitops-pipeline-app' . This one includes the YAML manifest files that we will need, as well as the CD portion of the pipeline that we will configure in the next few steps. You will need to update the information within these YAML files with your information, as well as the Jenkinsfile as well. Hopefully up to this point you have and iterated the Jenkins file in the 'project-pipeline-app' Jenkins file, and have been following along.
@@ -397,9 +428,11 @@ Namespace           = default
 argocd create new app image
 
 Return to the EKS-Bootstrap-Server, and issue this command:
-. sudo kubectl get pods
+
+    # sudo kubectl get pods
 You should see your pods in a ready state.
-. sudo kubectl get svc
+
+    # sudo kubectl get svc
 You should see your namespace that you created. Copy the external IP field, ie. aksdjfl;asfj-adsafdsf-region.elb.amazonaws.com; copy this into your browser, and append :8080 at the end, and it should bring up the default page of Tomcat. If you put /webapp at the end of the 8080, it should show the web application.
 
 Web Application image
