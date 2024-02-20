@@ -1,0 +1,4 @@
+pipeline {
+  agent { label 'Jenkins-Agent' }
+  environment { 
+            APP_NAME = 'pipeline_project_app'
