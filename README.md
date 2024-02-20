@@ -34,7 +34,7 @@ Required Downloads - openJDK-17-jre, docker, sonarqube, postgresql
 EKS-Bootstrap-Server
 Required Downloads - Docker, ArgoCD, kubectl
 
-## included in the repo is the Terraform configuration to get you started. It will launch Jenkins-Master, Jenkins-Agent, SonarQube, and EKS instance. When you launch each instance, make sure you run the apt commands to update, and upgrade prior to starting any other downloads. The instances will launch with the necessary ports open, so you should not have to mess with your security group rules, however, double check in the console. Note: Make sure you change the region, subnet ID's if you are using the Terraform template, they can be launched, however, they are more of a guide in order to let you know what the configuration is. If you want to use the console, you can skip this part of using Terraform, manually create your instances, and pick up below. I do however encourage you to navigate through completing the infrastructure as code portion, as this is just more practice. There is ALSO a Jenkins file that has the full pipeline already configured, you will need to update this information with YOUR information as we go. The project is iterative. I am assuming you have a bit of know how, and you test your build as we go along, comment out the parts we do not need and unlock them as we go along. There is some jumping back and forth, so please be aware of which repo I am directing you to. The Jenkinsfile in the 'pipeline-project' is the one that is iterative, and you should be following along, the second one in 'gitops-pipeline-app' is the secondary one. ##
+!!! Included in the repo is the Terraform configuration to get you started. It will launch Jenkins-Master, Jenkins-Agent, SonarQube, and EKS instance. When you launch each instance, make sure you run the apt commands to update, and upgrade prior to starting any other downloads. The instances will launch with the necessary ports open, so you should not have to mess with your security group rules, however, double check in the console. Note: Make sure you change the region, subnet ID's if you are using the Terraform template, they can be launched, however, they are more of a guide in order to let you know what the configuration is. If you want to use the console, you can skip this part of using Terraform, manually create your instances, and pick up below. I do however encourage you to navigate through completing the infrastructure as code portion, as this is just more practice. There is ALSO a Jenkins file that has the full pipeline already configured, you will need to update this information with YOUR information as we go. The project is iterative. I am assuming you have a bit of know how, and you test your build as we go along, comment out the parts we do not need and unlock them as we go along. There is some jumping back and forth, so please be aware of which repo I am directing you to. The Jenkinsfile in the 'pipeline-project' is the one that is iterative, and you should be following along, the second one in 'gitops-pipeline-app' is the secondary one. !!!
 
 Jenkins-Master Configuration:
 Using your SSH tool, login to the instance using its public IP address and the keypair you created earlier. Then run the following commands:
@@ -56,8 +56,8 @@ Using your SSH tool, login to the instance using its public IP address and the k
     # sudo systemctl status jenkins
     # sudo nano /etc/ssh/sshd_config
     $ In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save and close. 
-    
     # ssh-keygen
+    
 This will generate an SSH key that you will need to configure on the Jenkins-Agent in the next set of instructions. This should generate a keygen image:
 
 ![Screenshot 2024-02-20 101632](https://github.com/dcolanderjr/pipeline_project/assets/131455625/b35c459e-b845-486c-9d08-071670753f5b)
@@ -86,11 +86,9 @@ Next, navigate to your browser, and search for "Jenkins weekly release", navigat
     # sudo nano /etc/ssh/sshd_config
 In this file, uncomment PubkeyAuthentication yes AND AuthorizedKeysFile, save and close. 
 
+Perform this on both instances.
     
     # sudo service sshd reload
-Perform this on both instances.
- 
-    
     # cd .ssh/
 You should see an authorized_keys file, from that last step in the 'Jenkins-Master' node section, paste in your
 ssh key UNDER the existing one. DO NOT OVERWRITE THE EXISTING KEY. You can use vim or nano if you are not using MobaXterm. Once complete, ensure you run 'cat authorized_keys' to ensure you have completed this step.
@@ -161,8 +159,8 @@ Install PostgreSQL
     # sudo systemctl enable postgresql
 
 Create Database for Sonarqube
-    #sudo passwd postgres (IMPORTANT, YOU WILL NEED TO REMEMBER THIS PASSWORD)
     
+    #sudo passwd postgres (IMPORTANT, YOU WILL NEED TO REMEMBER THIS PASSWORD)
     # su - postgres
     # createuser sonar 
     # psql 
@@ -196,6 +194,7 @@ Linux Kernel Tuning - SonarQube uses alot of resources, and we need to tune some
 Increase Mapped Memory Regions - Long story short, elastisearch which is by SonarQube to find the vulnerabilties moves very fast to reference and cross reference from the DB, its imperative that we give it enough memory to do so, efficiently. Below this value, is not recommended.
 
     # sudo vim /etc/sysctl.conf (IMPORTANT STEP, DO NOT SKIP)
+    
     Paste the below values at the bottom of the file
     vm.max_map_count = 262144
 
@@ -262,8 +261,6 @@ If everything went well, you should have been presented with this page upon logi
 
 ![sonarqubewelcome](https://github.com/dcolanderjr/pipeline_project/assets/131455625/84ec2670-0779-4aaf-89d4-ffca47c3ab1e)
 
-
-
 Next, we now need to integrate SonarQube with Jenkins. Click on the 'A' in the upper right hand corner > My Account > Security > Generate Token 
 
 Name = jenkins-sonarqube-token
@@ -288,7 +285,6 @@ SonarQube Scanner, Sonar Quality Gates, Quality Gates, click the blue install bu
 Return to the dashboard. Go to Manage Jenkins > System enter the following information as shown in the screenshot, same VPC (private IP), different VPC (public IP)
 
 ![Screenshot 2024-02-20 130827](https://github.com/dcolanderjr/pipeline_project/assets/131455625/968d1b4b-040a-4dae-87d8-197a81c03157)
-
 
 Now, we need to create a webhook for SonarQube. Return to the SonarQube console, and navigate to Administration, click the configuration button, and choose webhook.
 
@@ -328,20 +324,25 @@ Next, we now need to install kubectl, use this command to download it:
     # sudo su
     # curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
     # ll 
-    # chmod +x ./kubectl
 Use this command to change the permissions of the ./kubectl directory
+    
+    # chmod +x ./kubectl
 
-    # mv kubectl /bin   
 All of our executables are in this folder, so need to move it there.
 
-    # kubectl version --output=yaml
+    # mv kubectl /bin   
+
 It will show a connection refused error, this is ok. We have not started the service yet. Nor have we finished the downloads.
+
+    # kubectl version --output=yaml
 
     # curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
     # cd /tmp
     # ll
-    # sudo mv /tmp/eksctl /bin
+
 We need to move this to /bin, because all of our executable files are already there.
+    
+    # sudo mv /tmp/eksctl /bin
     
     # eksctl version
 
@@ -386,6 +387,7 @@ In order to get the load balancer URL, we need to run the following command. The
     # sudo kubectl get svc -n argocd
     # sudo kubectl get secret argocd-initial-admin-secret -n argocd -o yaml
     # echo RjJxdUZWS0ZVSXZBZEhtVA== | base64 --decode
+
 Copy the response, and stick it in your note pad, you will need it to login to ArgoCD.
 
 ![retrievepassword](https://github.com/dcolanderjr/pipeline_project/assets/131455625/8c36b236-8ae2-4c07-84ed-88c97ed4feae)
@@ -401,7 +403,8 @@ Once you login to ArgoCD, go to User Info, IMMEDIATELY, and change your password
 Next, we need to add our EKS cluster to ArgoCD, and this must be done from the CLI. Issue the following command:
 
     # sudo argocd login XXXXXXXXXXXXXXXXXYOUR CLUSTER NAMEXXXXXXXXXX.us-east-1.elb.amazonaws.com --username admin
-type y, and then enter your password that you created in ArgoCD. You should have a green successful message. Return to ArgoCD, go to Settings > scroll down to clusters, and you should see the cluster you just added.
+    
+    type y, and then enter your password that you created in ArgoCD. You should have a green successful message. Return to ArgoCD, go to Settings > scroll down to          clusters, and you should see the cluster you just added.
 
 Next run this command to verify from the terminal: You should see your cluster listed. The second command will show your namespace, copy the name, it will start with i-0sdjlkafdsjlkajl-cluster.region.eksctl.io, copy this.
 
@@ -409,6 +412,7 @@ Next run this command to verify from the terminal: You should see your cluster l
     # sudo kubectl config get-contexts
     # argocd cluster add i-0sdjlkafdsjlkajl-cluster.region.eksctl.io --name enter_a_name_for_your_cluster
     # argocd cluster list 
+
 You should see all of the clusters.
 
 Ok, now we need to connect our repository to our ArgoCD cluster. But, before we do that, clone the second repo to your system, the one named 'gitops-pipeline-app' . This one includes the YAML manifest files that we will need, as well as the CD portion of the pipeline that we will configure in the next few steps. You will need to update the information within these YAML files with your information, as well as the Jenkinsfile as well. Hopefully up to this point you have and iterated the Jenkins file in the 'project-pipeline-app' Jenkins file, and have been following along.
@@ -435,9 +439,11 @@ Namespace           = default
 Return to the EKS-Bootstrap-Server, and issue this command:
 
     # sudo kubectl get pods
+
 You should see your pods in a ready state.
 
     # sudo kubectl get svc
+
 You should see your namespace that you created. Copy the external IP field, ie. aksdjfl;asfj-adsafdsf-region.elb.amazonaws.com; copy this into your browser, and append :8080 at the end, and it should bring up the default page of Tomcat. If you put /webapp at the end of the 8080, it should show the web application.
 
 ![webapp](https://github.com/dcolanderjr/pipeline_project/assets/131455625/29d41ec9-f4b1-4709-971c-f272b25eff1c)
