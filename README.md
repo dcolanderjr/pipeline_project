@@ -137,8 +137,6 @@ Navigate to Dashboard > Manage Jenkins > Tools
 ![javascriptinstallation](https://github.com/dcolanderjr/pipeline_project/assets/131455625/9b4a9e40-9f7e-4479-b203-23b43e2bf90a)
 
 
-![alt text](javascriptinstallation.png)
-
 Next, return to the Dashboard. Manage Jenkins > Credentials > System > Global credentials (unrestricted). If you have not alreday created your access token in github, do that now. Your password is your access token. The ID for this will be 'github' which is referenced in the Jenkinsfile script used later.
 
 ![credentials](https://github.com/dcolanderjr/pipeline_project/assets/131455625/ccf8f9c8-1899-40ba-b26a-22e184bd5b11)
