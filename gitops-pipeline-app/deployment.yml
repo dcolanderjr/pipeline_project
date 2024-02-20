@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pipeline-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pipeline-project
+  template:
+    metadata:
+      labels:
+        app: pipeline-project
+    spec:
+      containers:
+        - name: pipeline-project
+          image: dcolanderjr/pipeline_project_app:1.0.0-72
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
