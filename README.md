@@ -118,19 +118,22 @@ Scroll to the bottom, and in the pipeline box, choose the 'Hello World' script f
 
 On the following screen, click the Build Now button, you should get this:
 
-![alt text](TestPipeline.png)
+![TestPipeline](https://github.com/dcolanderjr/pipeline_project/assets/131455625/d7909ed5-557a-458e-b40c-8b8ad6a49b39)
 
 Next, we will configure the plugins that we are going to need. Navigate to Dashboard > Manage Jenkins > Plugins. Install the following plugins: Maven Integration, Pipeline Maven Integration, Eclipse Temurin Installer. Configure the plugins now. Make sure you use the names provided in the screenshots, they will be referenced in the pipeline script.
 
 Navigate to Dashboard > Manage Jenkins > Tools 
 
-![alt text](maveninstall.png)
+![maveninstall](https://github.com/dcolanderjr/pipeline_project/assets/131455625/866dff4d-82a6-4ac8-bef0-690964bfebf6)
 
-![alt text](javascriptinstallation.png)
+![javascriptinstallation](https://github.com/dcolanderjr/pipeline_project/assets/131455625/9b4a9e40-9f7e-4479-b203-23b43e2bf90a)
+
+
 
 Next, return to the Dashboard. Manage Jenkins > Credentials > System > Global credentials (unrestricted). If you have not alreday created your access token in github, do that now. Your password is your access token. The ID for this will be 'github' which is referenced in the Jenkinsfile script used later.
 
-insert image credentials
+![credentials](https://github.com/dcolanderjr/pipeline_project/assets/131455625/ccf8f9c8-1899-40ba-b26a-22e184bd5b11)
+
 
 Next, will configure the SonarQube Instance, you will need to SSH into the instance in order to configure it. The SonarQube instance is the t3.medium, again, the reason why this one is used is because of the database (PostgreSQL) and SonarQube. I am going to just leave the instructions on this portion. This part is not difficult, however, some of the learning pains I had doing this came from this section here.
 
@@ -203,7 +206,7 @@ Update Sonarqube properties with DB credentials
      sonar.jdbc.password=sonar
      sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
 
-insert image, sonarqubedbsettings
+![sonarqubedbsettings](https://github.com/dcolanderjr/pipeline_project/assets/131455625/b9f29c6f-f5e4-4121-8cb0-967d564336b3)
 
 
 Create the SonarQube Service. You will need to create this file, it is empty. And copy and paste the information below into it. Then save and quit.
@@ -242,7 +245,8 @@ Watch log files and monitor for startup
 
 If everything went well, you should have been presented with this page upon login:
 
-insert image sonarqube welcome
+![sonarqubewelcome](https://github.com/dcolanderjr/pipeline_project/assets/131455625/84ec2670-0779-4aaf-89d4-ffca47c3ab1e)
+
 
 
 Next, we now need to integrate SonarQube with Jenkins. Click on the 'A' in the upper right hand corner > My Account > Security > Generate Token 
@@ -268,19 +272,19 @@ SonarQube Scanner, Sonar Quality Gates, Quality Gates, click the blue install bu
 
 Return to the dashboard. Go to Manage Jenkins > System enter the following information as shown in the screenshot, same VPC (private IP), different VPC (public IP)
 
-insert sonarqubeserver 
+![Screenshot 2024-02-20 130827](https://github.com/dcolanderjr/pipeline_project/assets/131455625/968d1b4b-040a-4dae-87d8-197a81c03157)
+
 
 Now, we need to create a webhook for SonarQube. Return to the SonarQube console, and navigate to Administration, click the configuration button, and choose webhook.
 
-insert sonarqube webhook
+![sonarqubewebhook](https://github.com/dcolanderjr/pipeline_project/assets/131455625/d2dfd600-ff74-4750-bfa5-6b8b9fce506a)
 
 Next, we need to install docker on the Jenkins server. Move back over to the Jenkins console, from the Dashboard > Manage Jenkins > Plugins - install the following plugins:
 Docker, Docker Commons, Docker Pipeline, Docker API, CloudBees Docker Build & Push, docker-build-step
 Click install, at the bottom, ensure you click the tick box to restart Jenkins after installation.
 
 Next, we need to create a credential to log in to Docker. Navigate to Dashboard > Manage Jenkins > Credentials, input the following:
-
-image docker hub creds
+![dockerhubcredential](https://github.com/dcolanderjr/pipeline_project/assets/131455625/6461e7d1-0609-4fc9-be35-9b5e67bee6f5)
 
 At this point, you also need to install Trivy. On your Jenkins-Agent, login via SSH, and use the command:
 . sudo snap install trivy
@@ -317,7 +321,7 @@ It will show a connection refused error, this is ok. We have not started the ser
 We need to move this to /bin, because all of our executable files are already there.
 . eksctl version
 
-insert kubectl image
+![kubectl](https://github.com/dcolanderjr/pipeline_project/assets/131455625/ef0e3140-5096-49a8-9de8-7e450fb29b68)
 
 Alright, we are going to take a quick detour from the terminal to the console, ensure you are logged into your account that you can create IAM roles with, and delegate permissions. Navigate to IAM, and click on roles, then create role.
 
@@ -325,7 +329,7 @@ Create Role > AWS Service > Use Case (EC2) > Next - (Least privilege is a securi
 
 Name the role, eksctl_role. Next, head over to the EC2 console page, click your 'EKS-Bootstrap-Server' and click the actions drop down box > Security > Modify IAM Role > click the drop down and choose the IAM role you just created:
 
-insert IAM Role pic
+![eksctl_role](https://github.com/dcolanderjr/pipeline_project/assets/131455625/f8baf188-ff53-44fd-9258-213f02a97a0b)
 
 Now we need to create the EKS cluster; head back over to the terminal where your EKS-Bootstrap-Terminal is located, and perform the following per the screenshot (note, use your region, and name your cluster)
 
@@ -354,12 +358,12 @@ In order to get the load balancer URL, we need to run the following command. The
 . echo RjJxdUZWS0ZVSXZBZEhtVA== | base64 --decode
 Copy the response, and stick it in your note pad, you will need it to login to ArgoCD.
 
-insert image - retrieve password
+![retrievepassword](https://github.com/dcolanderjr/pipeline_project/assets/131455625/8c36b236-8ae2-4c07-84ed-88c97ed4feae)
 
 Run the following command to get the load balancer URL for the ArgoCD Login page:
 . kubectl get svc -n argocd
 
-insert ArgoCD snaps
+![argocdlogin](https://github.com/dcolanderjr/pipeline_project/assets/131455625/780b9afb-8c01-4b98-9165-8c6f67cb8ca2)
 
 Once you login to ArgoCD, go to User Info, IMMEDIATELY, and change your password to something more friendly. You'll need to paste in the temporary password used to login, and then choose your own.
 
@@ -394,7 +398,7 @@ Path                = ./
 Destination         = Choose your EKS cluster
 Namespace           = default
 
-argocd create new app image
+![argocdcreateapp](https://github.com/dcolanderjr/pipeline_project/assets/131455625/c174adcc-5b71-49a9-aff8-14275f1fc30b)
 
 Return to the EKS-Bootstrap-Server, and issue this command:
 . sudo kubectl get pods
@@ -402,13 +406,13 @@ You should see your pods in a ready state.
 . sudo kubectl get svc
 You should see your namespace that you created. Copy the external IP field, ie. aksdjfl;asfj-adsafdsf-region.elb.amazonaws.com; copy this into your browser, and append :8080 at the end, and it should bring up the default page of Tomcat. If you put /webapp at the end of the 8080, it should show the web application.
 
-Web Application image
+![webapp](https://github.com/dcolanderjr/pipeline_project/assets/131455625/29d41ec9-f4b1-4709-971c-f272b25eff1c)
 
 Return to the Jenkins console, and create a new pipeline. Name it 'gitops-pipeline-app-cd'. Tick the box that states to discard old builds, max builds to keep 2. Click on the button that says 'This project is parameterized' - Add parameter, and choose string parameter. For name, input 'IMAGE_TAG' (the CD job will change the IMAGE_TAG each time our pipeline is triggered, and will update the YML file.)  Click the 'Trigger builds remotely...' button. The authentication token name is 'gitops-token' (we will create this shortly)
 
 For pipeline definition, choose pipeline script from SCM (source control management), choose git, and then enter the repo URL of the 'gitops-pipeline-project' Next, choose your github credentials (should already be in there) for Branch, select main. Click apply, and save.
 
-CD pipeline image
+![cdpipelineimage](https://github.com/dcolanderjr/pipeline_project/assets/131455625/c4f823dc-972b-45fc-9e6b-7b4b2b7a9836)
 
 Return to the pipeline-project repo, and view the Jenkins file in the root directory, click on it, and edit.
 
@@ -422,11 +426,11 @@ Next, return to the Dashboard, navigate to > Manage Jenkins > Credentials > Syst
 
 Create a new credential. Kind = Secret, ID = JENKINS_API_TOKEN, the secret is the token key you just copied, paste it in. Save. At this point, if you have commented everything, and uncommented everything we have used thus far, this is the last edit we are making on this file in the project-pipeline repository.
 
-insert jenkinsgpa image
+![Screenshot 2024-02-20 162453](https://github.com/dcolanderjr/pipeline_project/assets/131455625/e13ef174-2747-474c-b90e-4783949a44e6)
 
 Now, return to the Jenkins console for one final tweak. We need to set the CRON job that will poll the repo to check for changes. Head over to Jenkins, and follow what the instructions of the below screenshot:
 
-insert config ci trigger image
+![buildtriggerpollscm](https://github.com/dcolanderjr/pipeline_project/assets/131455625/18005431-748c-40af-9d0e-05e65fb18381)
 
 Now, let us test. If we have done everything correctly, it should function as such:
 Source Code gets updated > Every minute Jenkins polls repo > Source Code Change = Build Job > Build Job is sent through SonarQube to check for CleanCode > If it passes, it is packaged and sent into a Docker Container > The docker container is scanned by Trivy > The Docker Image is updated in the YAML Manifest > The YAML is deployed in ArgoCD on Kubernetes > Web Application is Updated.
@@ -435,16 +439,21 @@ Using the code editor, navigate to the webapp/src/main/webapp directory, and run
 
 Once you quit, use 'git add .' , 'git commit -m "test" ' , 'git push origin main', this will push the update of the web application, and start the pipeline. Below are the screenshots capturing the pipeline.
 
+![sourcecodechange](https://github.com/dcolanderjr/pipeline_project/assets/131455625/05202f2b-e3c9-4d26-b5ce-a7963569ace7)
 
-source code change image.
+![pipeline-ci](https://github.com/dcolanderjr/pipeline_project/assets/131455625/768fabb1-6ece-42a5-ae7a-e3a65ef02565)
 
-build job 1
+![Screenshot 2024-02-20 164650](https://github.com/dcolanderjr/pipeline_project/assets/131455625/d8983c37-73f7-46ee-a476-0058f8036fe5)
 
-build job 2
+![watiing](https://github.com/dcolanderjr/pipeline_project/assets/131455625/a4e4aa8d-93bc-4b42-a667-b2b9c3fc7d7b)
 
-ArgoCD (Newest Build Image)
+![cd](https://github.com/dcolanderjr/pipeline_project/assets/131455625/8d4fbe38-48c4-424d-bca2-accdb6e68e0f)
+
+![image](https://github.com/dcolanderjr/pipeline_project/assets/131455625/7fc6fd3f-1b55-4cf8-93c9-512cd188b11c)
 
 
+And there you have it, that is a simple CI/CD pipeline. Still working out the kinks on GitHub Actions for the next one, but soon!
+Thanks again for the read, and a start would be pretty dope too. Take care.
 
 And that completes the CICD project. Hope you enjoyed the ride. Hope you had some fun, learned some new skills.
 Until next time, www.kloudkamp.com
