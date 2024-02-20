@@ -1,7 +1,8 @@
 # Purpose: This file contains the output block for the 
 # terraform resources created in the main.tf file. 
 # The output block is used to display the public ip, 
-# instance id and elastic ip of the jenkins master and agent instances. 
+# instance id and elastic ip of the jenkins master and agent instances
+# sonarqube and eks-bootstrap-server instances.
 # The public ip and instance id are used to connect to the instances and 
 # the elastic ip is used to associate the public ip with the instances. 
 # The public ipv6 address is also displayed in the output block.
