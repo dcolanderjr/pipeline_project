@@ -1,4 +1,4 @@
-                       ![Pipeline Diagram](https://github.com/dcolanderjr/pipeline_project/assets/131455625/00422475-6c61-44ed-b346-540388cde4b9)
+  ![Pipeline Diagram](https://github.com/dcolanderjr/pipeline_project/assets/131455625/00422475-6c61-44ed-b346-540388cde4b9)
 
 This project showcases a CI/CD pipeline. Starts out by a user uploading their code to Github, which will be pulled into Jenkins. After it is pulled into Jenkins, it'll be built and tested through Maven, and SonarQube respectively. After that, a Docker image will be created, and sent through Trivy for package scanning. This is the CI part of the pipeline. Afterwards, CD will start in which the manifest file will be created and sent back into GitHub. At that point, ArgoCD will pull the upgraded K8 manifest files and deploy them on EKS.
 A webhook will tie it all together, so that each time there is a git commit that updates the web application, it will automatically create a build pipeline for continuous delivery.
